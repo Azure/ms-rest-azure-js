@@ -11,29 +11,17 @@ const LroStates = Constants.LongRunningOperationStates;
  */
 export default class PollingState {
   /**
-   * @param {msRest.HttpOperationResponse} [response] - Response of the initial request that was made as a part of the asynchronous operation.
-   */
-  resultOfInitialRequest: msRest.HttpOperationResponse;
-  /**
-   * @param {msRest.RequestOptionsBase} [optionsOfInitialRequest] - Request options that were provided as a part of the initial request.
-   */
-  optionsOfInitialRequest!: msRest.RequestOptionsBase;
-  /**
    * @param {msRest.WebResource} [request] - provides information about the request made for polling.
    */
   request: msRest.WebResource;
   /**
    * @param {Response} [response] - The response object to extract longrunning operation status.
    */
-  response!: Response;
+  private _latestResponse: msRest.HttpResponse;
   /**
    * @param {any} [resource] - Provides information about the response body received in the polling request. Particularly useful when polling via provisioningState.
    */
   resource: any;
-  /**
-   * @param {number} [retryTimeout] - The timeout in seconds to retry on intermediate operation results. Default Value is 30.
-   */
-  retryTimeout = 30;
   /**
    * @param {string} [azureAsyncOperationHeaderLink] - The url that is present in "azure-asyncoperation" response header.
    */
@@ -51,23 +39,26 @@ export default class PollingState {
    */
   error?: msRest.RestError;
 
-  constructor(resultOfInitialRequest: msRest.HttpOperationResponse, retryTimeout = 30) {
-    this.resultOfInitialRequest = resultOfInitialRequest;
-    this.retryTimeout = retryTimeout;
-    this.updateResponse(resultOfInitialRequest.response);
-    this.request = resultOfInitialRequest.request;
+  /**
+   * Create a new PollingState object.
+   * @param {msRest.HttpResponse} _initialResponse - Response of the initial request that was made as a part of the asynchronous operation.
+   * @param {number} _retryTimeoutInSeconds - The timeout in seconds to retry on intermediate operation results. Default Value is 30.
+   */
+  constructor(private readonly _initialResponse: msRest.HttpResponse, private _retryTimeoutInSeconds: number) {
+    this.updateResponse(this._initialResponse);
+
     // Parse response.body & assign it as the resource.
     try {
-      if (resultOfInitialRequest.bodyAsText && resultOfInitialRequest.bodyAsText.length > 0) {
-        this.resource = JSON.parse(resultOfInitialRequest.bodyAsText);
+      if (this._initialResponse.bodyAsText && this._initialResponse.bodyAsText.length > 0) {
+        this.resource = JSON.parse(this._initialResponse.bodyAsText);
       } else {
-        this.resource = resultOfInitialRequest.parsedBody;
+        this.resource = this._initialResponse.parsedBody;
       }
     } catch (error) {
       const deserializationError = new msRest.RestError(`Error "${error}" occurred in parsing the responseBody " +
-        "while creating the PollingState for Long Running Operation- "${resultOfInitialRequest.bodyAsText}"`);
-      deserializationError.request = resultOfInitialRequest.request;
-      deserializationError.response = resultOfInitialRequest.response;
+        "while creating the PollingState for Long Running Operation- "${this._initialResponse.bodyAsText}"`);
+      deserializationError.request = this._initialResponse.request;
+      deserializationError.response = this._initialResponse.response;
       throw deserializationError;
     }
     switch (this.response.status) {
@@ -105,36 +96,40 @@ export default class PollingState {
    * Update cached data using the provided response object
    * @param {Response} [response] - provider response object.
    */
-  updateResponse(response: Response) {
-    this.response = response;
+  updateResponse(response: msRest.HttpResponse) {
+    this._latestResponse = response;
     if (response && response.headers) {
-      const asyncOperationHeader: string | null | undefined = response.headers.get("azure-asyncoperation");
-      const locationHeader: string | null | undefined = response.headers.get("location");
+      const asyncOperationHeader: string | undefined = response.headers.get("azure-asyncoperation");
       if (asyncOperationHeader) {
         this.azureAsyncOperationHeaderLink = asyncOperationHeader;
       }
 
+      const locationHeader: string | undefined = response.headers.get("location");
       if (locationHeader) {
         this.locationHeaderLink = locationHeader;
+      }
+
+      const retryAfterHeader: string | undefined = response.headers.get("retry-after");
+      if (retryAfterHeader) {
+        this._retryTimeoutInSeconds = parseInt(retryAfterHeader);
       }
     }
   }
 
   /**
-   * Gets timeout in milliseconds.
+   * Gets timeout in seconds.
    * @returns {number} timeout
    */
-  getTimeout() {
-    if (this.retryTimeout || this.retryTimeout === 0) {
-      return this.retryTimeout * 1000;
-    }
-    if (this.response) {
-      const retryAfter: string | null | undefined = this.response.headers.get("retry-after");
-      if (retryAfter) {
-        return parseInt(retryAfter) * 1000;
-      }
-    }
-    return 30 * 1000;
+  getTimeoutInSeconds() {
+    return this._retryTimeoutInSeconds;
+  }
+
+  /**
+   * Gets timeout in millisecondsseconds.
+   * @returns {number} timeout
+   */
+  getTimeoutInMilliseconds() {
+    return this.getTimeoutInSeconds() * 1000;
   }
 
   /**
