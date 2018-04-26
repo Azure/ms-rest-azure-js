@@ -62,20 +62,16 @@ export class AzureServiceClient extends msRest.ServiceClient {
       }
     }
 
-    let result: msRest.HttpResponse;
     if (pollingState.status === LroStates.Succeeded) {
       if ((pollingState.azureAsyncOperationHeaderLink || !pollingState.resource) &&
         (initialRequestMethod === "PUT" || initialRequestMethod === "PATCH")) {
         await this.updateStateFromGetResourceOperation(resourceUrl, pollingState);
-        result = pollingState.getOperationResponse();
-      } else {
-        result = pollingState.getOperationResponse();
       }
     } else {
       throw pollingState.getRestError();
     }
 
-    return result;
+    return pollingState.latestResponse;
   }
 
   /**
@@ -189,28 +185,14 @@ export class AzureServiceClient extends msRest.ServiceClient {
     const statusCode: number = statusResponse.statusCode;
     const responseBody: { [propertyName: string]: any } = await statusResponse.deserializedBody();
     if (statusCode !== 200 && statusCode !== 201 && statusCode !== 202 && statusCode !== 204) {
-      let noAuthRequest: msRest.HttpRequest = statusResponse.request;
-      if (statusResponse.headers.contains("authorization")) {
-        
-      }
-      const noAuthRequest: msRest.HttpRequest = !statusResponse.headers.contains("authorization") ? statusResponse.headers.get("authorization") ? statusResponse.request.clone();
-      noAuthRequest.headers.
-      const error = new msRest.RestError(`Invalid status code with response body "${JSON.stringify(responseBody)}" occurred when polling for operation status.`, {
-        statusCode: statusCode
-
+      throw new msRest.RestError(`Invalid status code with response body "${JSON.stringify(responseBody)}" occurred when polling for operation status.`, {
+        statusCode: statusCode,
+        request: statusResponse.request,
+        response: statusResponse,
+        body: responseBody
       });
-
-      error.request = msRest.stripRequest(statusResponse.request);
-      error.response = statusResponse.response;
-      try {
-        error.body = responseBody;
-      } catch (badResponse) {
-        error.message += ` Error "${badResponse}" occured while deserializing the response body - "${statusResponse.bodyAsText}".`;
-        error.body = statusResponse.bodyAsText;
-      }
-      return Promise.reject(error);
     }
 
-    return Promise.resolve(statusResponse);
+    return statusResponse;
   }
 }

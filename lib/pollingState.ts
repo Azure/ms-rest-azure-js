@@ -11,33 +11,33 @@ const LroStates = Constants.LongRunningOperationStates;
  */
 export default class PollingState {
   /**
-   * @param {msRest.WebResource} [request] - provides information about the request made for polling.
+   * @param {msRest.HttpRequest} [request] - provides information about the request made for polling.
    */
-  request: msRest.WebResource;
+  public request: msRest.HttpRequest;
   /**
    * @param {Response} [response] - The response object to extract longrunning operation status.
    */
-  private _latestResponse: msRest.HttpResponse;
+  public latestResponse: msRest.HttpResponse;
   /**
    * @param {any} [resource] - Provides information about the response body received in the polling request. Particularly useful when polling via provisioningState.
    */
-  resource: any;
+  public resource: any;
   /**
    * @param {string} [azureAsyncOperationHeaderLink] - The url that is present in "azure-asyncoperation" response header.
    */
-  azureAsyncOperationHeaderLink?: string;
+  public azureAsyncOperationHeaderLink?: string;
   /**
    * @param {string} [locationHeaderLink] - The url that is present in "Location" response header.
    */
-  locationHeaderLink?: string;
+  public locationHeaderLink?: string;
   /**
    * @param {string} [status] - The status of polling. "Succeeded, Failed, Cancelled, Updating, Creating, etc."
    */
-  status?: string;
+  public status?: string;
   /**
    * @param {msRest.RestError} [error] - Provides information about the error that happened while polling.
    */
-  error?: msRest.RestError;
+  public error?: msRest.RestError;
 
   /**
    * Create a new PollingState object.
@@ -45,23 +45,22 @@ export default class PollingState {
    * @param {number} _retryTimeoutInSeconds - The timeout in seconds to retry on intermediate operation results. Default Value is 30.
    */
   constructor(private readonly _initialResponse: msRest.HttpResponse, private _retryTimeoutInSeconds: number) {
+    this.request = this._initialResponse.request;
+    this.latestResponse = this._initialResponse;
+
     this.updateResponse(this._initialResponse);
 
     // Parse response.body & assign it as the resource.
     try {
-      if (this._initialResponse.bodyAsText && this._initialResponse.bodyAsText.length > 0) {
-        this.resource = JSON.parse(this._initialResponse.bodyAsText);
-      } else {
-        this.resource = this._initialResponse.parsedBody;
-      }
+      this.resource = this._initialResponse.deserializedBody();
     } catch (error) {
-      const deserializationError = new msRest.RestError(`Error "${error}" occurred in parsing the responseBody " +
-        "while creating the PollingState for Long Running Operation- "${this._initialResponse.bodyAsText}"`);
-      deserializationError.request = this._initialResponse.request;
-      deserializationError.response = this._initialResponse.response;
-      throw deserializationError;
+      throw new msRest.RestError(`Error "${error}" occurred in parsing the responseBody while creating the PollingState for Long Running Operation`, {
+        request: this._initialResponse.request,
+        response: this._initialResponse
+      });
     }
-    switch (this.response.status) {
+
+    switch (this.latestResponse.statusCode) {
       case 202:
         this.status = LroStates.InProgress;
         break;
@@ -97,7 +96,7 @@ export default class PollingState {
    * @param {Response} [response] - provider response object.
    */
   updateResponse(response: msRest.HttpResponse) {
-    this._latestResponse = response;
+    this.latestResponse = response;
     if (response && response.headers) {
       const asyncOperationHeader: string | undefined = response.headers.get("azure-asyncoperation");
       if (asyncOperationHeader) {
@@ -133,53 +132,33 @@ export default class PollingState {
   }
 
   /**
-   * Returns long running operation result.
-   * @returns {msRest.HttpOperationResponse} HttpOperationResponse
-   */
-  getOperationResponse(): msRest.HttpOperationResponse {
-    const result = new msRest.HttpOperationResponse(this.request, this.response);
-    if (this.resource && typeof this.resource.valueOf() === "string") {
-      result.bodyAsText = this.resource;
-      result.parsedBody = JSON.parse(this.resource);
-    } else {
-      result.parsedBody = this.resource;
-      result.bodyAsText = JSON.stringify(this.resource);
-    }
-    return result;
-  }
-
-  /**
    * Returns an Error on operation failure.
    * @param {Error} err - The error object.
    * @returns {msRest.RestError} The RestError defined in the runtime.
    */
   getRestError(err?: Error): msRest.RestError {
-    let errMsg: string;
-    let errCode: string | undefined = undefined;
-
-    const error = new msRest.RestError("");
-    error.request = msRest.stripRequest(this.request);
-    error.response = this.response;
-    const parsedResponse = this.resource as { [key: string]: any };
-
+    let errorMessage: string;
     if (err && err.message) {
-      errMsg = `Long running operation failed with error: "${err.message}".`;
+      errorMessage = `Long running operation failed with error: "${err.message}".`;
     } else {
-      errMsg = `Long running operation failed with status: "${this.status}".`;
+      errorMessage = `Long running operation failed with status: "${this.status}".`;
+    }
+    
+    let errorCode: string | undefined = undefined;
+    if (this.resource) {
+      if (this.resource.error && this.resource.error.message) {
+        errorMessage = `Long running operation failed with error: "${this.resource.error.message}".`;
+      }
+      if (this.resource.error && this.resource.error.code) {
+        errorCode = this.resource.error.code as string;
+      }
     }
 
-    if (parsedResponse) {
-      if (parsedResponse.error && parsedResponse.error.message) {
-        errMsg = `Long running operation failed with error: "${parsedResponse.error.message}".`;
-      }
-      if (parsedResponse.error && parsedResponse.error.code) {
-        errCode = parsedResponse.error.code as string;
-      }
-    }
-
-    error.message = errMsg;
-    if (errCode) error.code = errCode;
-    error.body = parsedResponse;
-    return error;
+    return new msRest.RestError(errorMessage, {
+      request: this.request,
+      response: this.latestResponse,
+      code: errorCode,
+      body: this.resource
+    });
   }
 }
