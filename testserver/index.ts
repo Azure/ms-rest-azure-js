@@ -23,5 +23,5 @@ app.post("/fileupload", function(req, res) {
 });
 
 app.listen(port, function() {
-    console.log(`ms-rest-js testserver listening on port ${port}...`);
+    console.log(`ms-rest-azure-js testserver listening on port ${port}...`);
 });
