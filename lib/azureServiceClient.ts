@@ -40,7 +40,7 @@ export class AzureServiceClient extends msRest.ServiceClient {
    * @returns {Promise<msRest.HttpResponse>} result - The final response after polling is complete.
    */
   async getLongRunningOperationResult(initialResponse: msRest.HttpResponse): Promise<msRest.HttpResponse> {
-    const initialRequestMethod: msRest.HttpMethod = initialResponse.request.method;
+    const initialRequestMethod: msRest.HttpMethod = initialResponse.request.method as msRest.HttpMethod;
 
     if (this.checkResponseStatusCodeFailed(initialResponse)) {
       throw new Error(`Unexpected polling status code from long running operation "${initialResponse.statusCode}" for method "${initialRequestMethod}".`);
@@ -80,10 +80,10 @@ export class AzureServiceClient extends msRest.ServiceClient {
    */
   private checkResponseStatusCodeFailed(initialResponse: msRest.HttpResponse): boolean {
     const statusCode: number = initialResponse.statusCode;
-    const method: msRest.HttpMethod = initialResponse.request.method;
+    const method: msRest.HttpMethod = initialResponse.request.method as msRest.HttpMethod;
     if (statusCode === 200 || statusCode === 202 ||
       (statusCode === 201 && method === msRest.HttpMethod.PUT) ||
-      (statusCode === 204 && (method === "DELETE" || method === "POST"))) {
+      (statusCode === 204 && (method === msRest.HttpMethod.DELETE || method === msRest.HttpMethod.POST))) {
       return false;
     } else {
       return true;
@@ -129,8 +129,8 @@ export class AzureServiceClient extends msRest.ServiceClient {
     if (statusCode === 202) {
       pollingState.status = LroStates.InProgress;
     } else if (statusCode === 200 ||
-      (statusCode === 201 && (method === "PUT" || method === "PATCH")) ||
-      (statusCode === 204 && (method === "DELETE" || method === "POST"))) {
+      (statusCode === 201 && (method === msRest.HttpMethod.PUT || method === msRest.HttpMethod.PATCH)) ||
+      (statusCode === 204 && (method === msRest.HttpMethod.DELETE || method === msRest.HttpMethod.POST))) {
       pollingState.status = LroStates.Succeeded;
       pollingState.resource = parsedResponse;
       // we might not throw an error, but initialize here just in case.

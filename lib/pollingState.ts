@@ -143,7 +143,7 @@ export default class PollingState {
     } else {
       errorMessage = `Long running operation failed with status: "${this.status}".`;
     }
-    
+
     let errorCode: string | undefined = undefined;
     if (this.resource) {
       if (this.resource.error && this.resource.error.message) {
