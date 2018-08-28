@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpOperationResponse, RequestOptionsBase } from "ms-rest-js";
+import { HttpOperationResponse, RequestOptionsBase, RestResponse, flattenResponse } from "ms-rest-js";
 import { AzureServiceClient } from "./azureServiceClient";
 import { createLROPollStrategyFromInitialResponse, createLROPollStrategyFromPollState, LROPollState, LROPollStrategy } from "./lroPollStrategy";
 import { LongRunningOperationStates } from "./util/constants";
@@ -105,15 +105,24 @@ export class LROPoller {
   /**
    * Send poll requests that check the LRO's status until it is determined that the LRO is finished.
    */
-  public async pollUntilFinished(): Promise<HttpOperationResponse> {
-    let result: Promise<HttpOperationResponse>;
+  public async pollUntilFinished(): Promise<RestResponse> {
+    let result: Promise<RestResponse>;
     const lroPollStrategy: LROPollStrategy | undefined = this._lroPollStrategy;
+
+    const initialResponse = this._initialResponse;
+    const operationSpec = initialResponse.request.operationSpec;
     if (!lroPollStrategy) {
-      result = Promise.resolve(this._initialResponse);
+      const getter = initialResponse.request.operationResponseGetter;
+      result = Promise.resolve(flattenResponse(initialResponse, getter && operationSpec && getter(operationSpec, initialResponse)));
     } else {
       result = lroPollStrategy.pollUntilFinished().then((succeeded: boolean) => {
         if (succeeded) {
-          return lroPollStrategy.getOperationResponse();
+          return lroPollStrategy.getOperationResponse().then(res => {
+            const response = this.getMostRecentResponse();
+            const getter = response.request.operationResponseGetter;
+            const responseSpec = getter && operationSpec && getter(operationSpec, response);
+            return flattenResponse(res, responseSpec);
+          });
         } else {
           throw lroPollStrategy.getRestError();
         }
