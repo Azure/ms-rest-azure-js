@@ -109,20 +109,12 @@ export class LROPoller {
     let result: Promise<RestResponse>;
     const lroPollStrategy: LROPollStrategy | undefined = this._lroPollStrategy;
 
-    const initialResponse = this._initialResponse;
-    const operationSpec = initialResponse.request.operationSpec;
     if (!lroPollStrategy) {
-      const getter = initialResponse.request.operationResponseGetter;
-      result = Promise.resolve(flattenResponse(initialResponse, getter && operationSpec && getter(operationSpec, initialResponse)));
+      result = Promise.resolve(flattenAzureResponse(this._initialResponse));
     } else {
       result = lroPollStrategy.pollUntilFinished().then((succeeded: boolean) => {
         if (succeeded) {
-          return lroPollStrategy.getOperationResponse().then(res => {
-            const response = this.getMostRecentResponse();
-            const getter = response.request.operationResponseGetter;
-            const responseSpec = getter && operationSpec && getter(operationSpec, response);
-            return flattenResponse(res, responseSpec);
-          });
+          return lroPollStrategy.getOperationResponse().then(flattenAzureResponse);
         } else {
           throw lroPollStrategy.getRestError();
         }
@@ -150,4 +142,9 @@ export function createLROPollerFromInitialResponse(azureServiceClient: AzureServ
 export function createLROPollerFromPollState(azureServiceClient: AzureServiceClient, lroMemento: LROPollState): LROPoller {
   const lroPollStrategy: LROPollStrategy | undefined = createLROPollStrategyFromPollState(azureServiceClient, lroMemento);
   return new LROPoller(lroPollStrategy, lroMemento.initialResponse);
+}
+
+function flattenAzureResponse(response: HttpOperationResponse): RestResponse {
+  const { operationResponseGetter, operationSpec } = response.request;
+  return flattenResponse(response, operationResponseGetter && operationSpec && operationResponseGetter(operationSpec, response));
 }
