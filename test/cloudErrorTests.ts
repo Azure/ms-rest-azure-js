@@ -31,7 +31,7 @@ describe("CloudError", () => {
                 message: "test message",
                 target: "my target",
                 details: [ { name: "error", code: "404", message: "not found" }, { name: "error", code: "500", message: "Internal error" } ],
-                innererror: new Error("Resource not found"),
+                innerError: new Error("Resource not found"),
                 stack: "call stack"
             };
 
@@ -44,7 +44,7 @@ describe("CloudError", () => {
             expect(serializedCloudError.details[1].code).to.be.equal(cloudError.details![1].code);
             expect(serializedCloudError.details[1].message).to.be.equal(cloudError.details![1].message);
             expect(serializedCloudError.details[1].name).to.not.exist;
-            expect(serializedCloudError.innererror).to.be.equal(cloudError.innererror);
+            expect(serializedCloudError.innererror).to.be.equal(cloudError.innerError);
             expect(serializedCloudError.stack).to.not.exist;
         });
     });
@@ -64,7 +64,7 @@ describe("CloudError", () => {
             expect(deserializedCloudError.message).to.be.equal(cloudError.message);
             expect(deserializedCloudError.target).to.not.exist;
             expect(deserializedCloudError.details).to.not.exist;
-            expect(deserializedCloudError.innererror).to.not.exist;
+            expect(deserializedCloudError.innerError).to.not.exist;
         });
 
         it("serializes properly optional properties", () => {
@@ -82,7 +82,7 @@ describe("CloudError", () => {
 
             expect(deserializedCloudError.target).to.be.equal(cloudError.target);
             expect(deserializedCloudError.details).to.be.deep.equal(cloudError.details);
-            expect(deserializedCloudError.innererror).to.be.equal(cloudError.innererror);
+            expect(deserializedCloudError.innerError).to.be.equal(cloudError.innererror);
             expect(deserializedCloudError.stack).to.not.exist;
         });
     });

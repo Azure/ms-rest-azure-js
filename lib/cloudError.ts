@@ -27,7 +27,7 @@ export interface CloudError extends Error {
   /**
    * @property {any} [innerError] The inner error parsed from the body of the http error response
    */
-  innererror?: any;
+  innerError?: any;
 }
 
 export const CloudErrorMapper: CompositeMapper = {
@@ -69,7 +69,7 @@ export const CloudErrorMapper: CompositeMapper = {
           }
         }
       },
-      innererror: {
+      innerError: {
         required: false,
         serializedName: "innererror",
         type: {
