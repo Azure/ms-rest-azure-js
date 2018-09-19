@@ -95,12 +95,12 @@ describe("CloudError", () => {
                 "code": "301",
                 "target": "$search",
                 "message": "$search query option not supported",
-                "additionalInfo": [{
+                "additionalInfo": {
                   "type": "SomeErrorType",
                   "info": {
                     "someProperty": "SomeValue"
                   }
-                }]
+                }
               }]
             };
 
@@ -109,11 +109,10 @@ describe("CloudError", () => {
             expect(deserializedError.code).to.equal("BadArgument");
             expect(deserializedError.message).to.equal("The provided database ‘foo’ has an invalid username.");
             expect(deserializedError.target).to.equal("query");
-            expect(deserializedError.details!.length).to.equal(1);
+            expect(deserializedError.details.length).to.equal(1);
             expect(deserializedError.details![0].code).to.equal("301");
-            expect(deserializedError.details![0].additionalInfo.length).to.equal(1);
-            expect(deserializedError.details![0].additionalInfo[0].type).to.equal("SomeErrorType");
-            expect(deserializedError.details![0].additionalInfo[0].info.someProperty).to.equal("SomeValue");
+            expect(deserializedError.details![0].additionalInfo.type).to.equal("SomeErrorType");
+            expect(deserializedError.details![0].additionalInfo.info.someProperty).to.equal("SomeValue");
             done();
         });
     });

@@ -84,12 +84,22 @@ export const CloudErrorMapper: CompositeMapper = {
         required: false,
         serializedName: "additionalInfo",
         type: {
-          name: "Sequence",
-          element: {
-            required: false,
-            serializedName: "AdditionalInfoElementType",
+          name: "Composite",
+          className: "AdditionalInfoElement",
+          modelProperties: {
             type: {
-              name: "Object"
+              required: true,
+              serializedName: "type",
+              type: {
+                name: "String"
+              }
+            },
+            info: {
+              required: false,
+              serializedName: "info",
+              type: {
+                name: "Object"
+              }
             }
           }
         }
