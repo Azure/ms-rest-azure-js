@@ -49,7 +49,7 @@
     "ts-node": "^5.0.1",
     "tslint": "^5.7.0",
     "typescript": "^3.0.3",
-    "uglify-es": "^3.1.0",
+    "uglify-js": "^3.4.9",
     "webpack": "^3.6.0",
     "yarn": "^1.6.0"
   },
