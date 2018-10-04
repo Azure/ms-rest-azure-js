@@ -25,7 +25,7 @@
     "autorest",
     "clientruntime"
   ],
-  "main": "./dist/lib/msRestAzure.js",
+  "main": "./dist/msRestAzure.js",
   "browser": "./es/lib/msRestAzure.js",
   "types": "./es/lib/msRestAzure.d.ts",
   "files": [
