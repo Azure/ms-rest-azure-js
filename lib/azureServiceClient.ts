@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
-import { HttpOperationResponse, OperationArguments, OperationSpec, RequestOptionsBase, RequestPrepareOptions, ServiceClient, ServiceClientCredentials, ServiceClientOptions, WebResource, getDefaultUserAgentValue } from "ms-rest-js";
+import { HttpOperationResponse, OperationArguments, OperationSpec, RequestOptionsBase, RequestPrepareOptions, ServiceClient, ServiceClientCredentials, ServiceClientOptions, WebResource, getDefaultUserAgentValue as getDefaultUserAgentValueFromMsRest } from "ms-rest-js";
 import { createLROPollerFromInitialResponse, createLROPollerFromPollState, LROPoller } from "./lroPoller";
 import { LROPollState } from "./lroPollStrategy";
 import * as Constants from "./util/constants";
@@ -105,6 +105,11 @@ export class AzureServiceClient extends ServiceClient {
   }
 }
 
+export function getDefaultUserAgentValue(): string {
+  const defaultUserAgent = getDefaultUserAgentValueFromMsRest();
+  return `ms-rest-azure-js/${Constants.msRestAzureVersion} ${defaultUserAgent}`;
+}
+
 export function updateOptionsWithDefaultValues(options?: AzureServiceClientOptions): AzureServiceClientOptions {
   if (!options) {
     options = {};
@@ -115,8 +120,7 @@ export function updateOptionsWithDefaultValues(options?: AzureServiceClientOptio
   }
 
   if (!options.userAgent) {
-    const defaultUserAgent = getDefaultUserAgentValue();
-    options.userAgent = `ms-rest-azure-js/${Constants.msRestAzureVersion} ${defaultUserAgent}`;
+    options.userAgent = getDefaultUserAgentValue();
   }
 
   return options;
