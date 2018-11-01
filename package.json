@@ -41,7 +41,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "ms-rest-js": "file:/Users/kamip/Repos/ms-rest-js",
+    "ms-rest-js": "^1.0.455",
     "tslib": "^1.9.2"
   },
   "devDependencies": {
