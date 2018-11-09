@@ -2,7 +2,7 @@
 
 ## 1.1.0 - 2018/11/09
 
-- Renamed NPM package to @azure/ms-rest-azure-js and update renamed dependencies
+- Renamed NPM package to @azure/ms-rest-azure-js and updated renamed dependencies
 
 ## 1.0.0 - 2018/10/04
 
