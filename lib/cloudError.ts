@@ -11,7 +11,7 @@ export interface CloudError extends Error {
   /**
    * @property {string} code The error code parsed from the body of the http error response.
    */
-  code: string;
+  _code: string;
   /**
    * @property {string} message The error message parsed from the body of the http error response.
    */
