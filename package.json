@@ -101,7 +101,7 @@
     "test:tslint": "tslint -p . -c tslint.json --exclude test/**/*.ts",
     "prepack": "npm install && npm run build",
     "publish-preview": "npm test && shx rm -rf dist/test && node ./.scripts/publish",
-    "local": "ts-node ./.scripts/local.ts",
+    "local": "npm explore @ts-common/azure-js-dev-tools -- node ./dist/local.js",
     "preview": "ts-node ./.scripts/preview.ts",
     "latest": "ts-node ./.scripts/latest.ts"
   },
