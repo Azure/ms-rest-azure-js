@@ -101,9 +101,8 @@
     "test:tslint": "tslint -p . -c tslint.json --exclude test/**/*.ts",
     "prepack": "npm install && npm run build",
     "publish-preview": "npm test && shx rm -rf dist/test && node ./.scripts/publish",
-    "local": "npm explore @ts-common/azure-js-dev-tools -- node ./dist/local.js",
-    "preview": "ts-node ./.scripts/preview.ts",
-    "latest": "ts-node ./.scripts/latest.ts"
+    "local": "npm explore @ts-common/azure-js-dev-tools -- npm run local",
+    "latest": "npm explore @ts-common/azure-js-dev-tools -- npm run latest"
   },
   "sideEffects": false
 }
