@@ -2164,12 +2164,6 @@ describe("AzureServiceClient", () => {
               body: {
                 status: "Succeeded"
               }
-            },
-            {
-              status: 200,
-              body: {
-                a: "A"
-              }
             }
           ]);
           const httpRequest = new WebResource("https://fake.azure.com/longRunningOperation", "POST");
