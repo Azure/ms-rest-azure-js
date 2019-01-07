@@ -2175,9 +2175,9 @@ describe("AzureServiceClient", () => {
           const httpRequest = new WebResource("https://fake.azure.com/longRunningOperation", "POST");
           const httpResponse: HttpOperationResponse = await serviceClient.sendLongRunningRequest(httpRequest);
           assert.strictEqual(httpResponse.status, 200);
-          assert.strictEqual(httpResponse.bodyAsText, `{"a":"A"}`);
-          assert.deepEqual(httpResponse.parsedBody, { a: "A" });
-          assert.strictEqual(httpResponse.request.url, "https://fake.azure.com/longRunningOperation3");
+          assert.strictEqual(httpResponse.bodyAsText, `{"status":"Succeeded"}`);
+          assert.deepEqual(httpResponse.parsedBody, { status: "Succeeded" });
+          assert.strictEqual(httpResponse.request.url, "https://fake.azure.com/longRunningOperation2");
         });
 
         describe("Headers: Location", () => {
