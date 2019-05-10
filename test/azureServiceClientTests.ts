@@ -2517,7 +2517,7 @@ describe("AzureServiceClient", () => {
       if (typeof actual.userAgent === "string") {
         actualUserAgent = actual.userAgent;
       } else if (typeof actual.userAgent === "function") {
-        actualUserAgent = actual.userAgent("");
+        actualUserAgent = (actual as any).userAgent("");
       }
       delete actual.userAgent;
       delete expected.userAgent;
