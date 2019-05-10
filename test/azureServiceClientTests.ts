@@ -2514,11 +2514,12 @@ describe("AzureServiceClient", () => {
   describe("updateOptionsWithDefaultValues()", () => {
     function assertOptionEqual(actual: AzureServiceClientOptions, expected: AzureServiceClientOptions) {
       let actualUserAgent: string | undefined;
+      const userAgent: string | ((defaultUserAgent: string) => string) = actual.userAgent!;
 
-      if (typeof actual.userAgent === "string") {
-        actualUserAgent = (actual.userAgent! as string);
+      if (typeof userAgent === "string") {
+        actualUserAgent = userAgent;
       } else if (typeof actual.userAgent === "function") {
-        actualUserAgent = (actual.userAgent! as ((defaultUserAgent: string) => string))("");
+        actualUserAgent = userAgent("");
       }
       delete actual.userAgent;
       delete expected.userAgent;
