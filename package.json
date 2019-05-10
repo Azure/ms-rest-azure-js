@@ -41,7 +41,7 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@azure/ms-rest-js": "^1.8.1",
+    "@azure/ms-rest-js": "file:../ms-rest-js",
     "tslib": "^1.9.2"
   },
   "devDependencies": {
