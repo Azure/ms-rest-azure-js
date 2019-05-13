@@ -61,4 +61,4 @@ jobs:
     inputs:
       command: custom
       verbose: false
-      customCommand: build
+      customCommand: run build
