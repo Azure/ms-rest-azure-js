@@ -57,8 +57,14 @@ jobs:
     vmImage: 'Ubuntu 16.04'
   steps:
   - task: Npm@1
-    displayName: 'npm build'
+    displayName: 'npm install'
     inputs:
       command: custom
       verbose: false
-      customCommand: build
+      customCommand: install
+  - task: Npm@1
+    displayName: 'npm run build'
+    inputs:
+      command: custom
+      verbose: true
+      customCommand: run build
