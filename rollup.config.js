@@ -12,14 +12,14 @@ const banner = `/** @license ms-rest-azure-js
  */
 const config = {
   input: './es/lib/msRestAzure.js',
-  external: ["@azure/ms-rest-js"],
+  external: ["@azure/core-http"],
   output: {
     file: "./dist/msRestAzure.js",
     format: "umd",
     name: "msRestAzure",
     sourcemap: true,
     globals: {
-      "@azure/ms-rest-js": "msRest"
+      "@azure/core-http": "Azure.Core.HTTP"
     },
     banner
   },
