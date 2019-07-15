@@ -24,7 +24,7 @@ const config = {
     banner
   },
   plugins: [
-    nodeResolve({ module: true }),
+    nodeResolve({ mainFields: ["module", "main"]}),
     sourcemaps(),
     visualizer({ filename: "dist/node-stats.html", sourcemap: true })
   ]
