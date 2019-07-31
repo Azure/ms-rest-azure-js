@@ -1,4 +1,7 @@
 # Changelog
+## 2.0.1 - 2019-07-30
+- In `getOperationResponse()` if the `resource` is of type `string` and we get an error while performing `JSON.parse()` then instead of letting the error be thrown we set the `resource` as-is as the `response.parsedBody`
+
 ## 2.0.0 - 2019-07-15
 - Bumping the version to `2.0.0` since the underlying dependency `@azure/ms-rest-js` has moved to `2.x.x` range.
   - `@azure/ms-rest-js@2.x.x` is using `node-fetch` instead of `axios` as the http client for node.js scenario.

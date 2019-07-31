@@ -27,4 +27,4 @@ export const DEFAULT_LANGUAGE = "en-us";
  * @const
  * @type {string}
  */
-export const msRestAzureVersion = "2.0.0";
+export const msRestAzureVersion = "2.0.1";
