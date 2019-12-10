@@ -1,4 +1,7 @@
 # Changelog
+## 1.3.8 - 2019-06-06
+- Fixed tests to pass when -preview suffix set in version.
+
 ## 1.3.7 - 2019-06-04
 - Updated `@azure/ms-rest-js` to `^1.8.10`
 
