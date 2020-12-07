@@ -6,7 +6,7 @@ resources:
       type: github
       name: joheredi/azure-sdk-for-js/
       ref: prototype-external-pipelines
-      endpoint: git@github.com:joheredi/azure-sdk-for-js.git
+      endpoint: https://github.com/joheredi/azure-sdk-for-js.git
 
 trigger:
   branches:
