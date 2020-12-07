@@ -2,7 +2,7 @@ resources:
   repositories:
     - repository: azure-sdk-for-js
       type: github
-      name: joheredi/azure-sdk-for-js@prototype-external-pipelines
+      name: joheredi/azure-sdk-for-js
       endpoint: joheredi
     
 
