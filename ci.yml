@@ -4,6 +4,7 @@ resources:
       type: github
       name: joheredi/azure-sdk-for-js
       endpoint: joheredi
+      ref: prototype-external-pipelines
     
 
 trigger:
