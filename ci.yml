@@ -13,9 +13,6 @@ trigger:
       - master
       - release/*
       - hotfix/*
-  paths:
-    include:
-      - sdk/tables/
 
 pr:
   branches:
