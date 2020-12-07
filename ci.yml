@@ -1,3 +1,11 @@
+resources:
+  repositories:
+    - repository: azure-sdk-for-js
+      type: github
+      name: joheredi/azure-sdk-for-js@prototype-external-pipelines
+      endpoint: joheredi
+    
+
 trigger:
   branches:
     include:
@@ -14,7 +22,7 @@ pr:
       - hotfix/*
 
 extends:
-  template: https://raw.githubusercontent.com/joheredi/azure-sdk-for-js/prototype-external-pipelines/eng/pipelines/templates/stages/archetype-sdk-external.yml
+  template: eng/pipelines/templates/stages/archetype-sdk-external.yml@azure-sdk-for-js
   parameters:
     ServiceDirectory: ms-rest-js
     Artifacts:
