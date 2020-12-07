@@ -1,0 +1,34 @@
+# Repo: Contoso/LinuxProduct
+# File: azure-pipelines.yml
+resources:
+  repositories:
+    - repository: azure-sdk-for-js
+      type: github
+      name: joheredi/azure-sdk-for-js/
+      ref: prototype-external-pipelines
+
+trigger:
+  branches:
+    include:
+      - master
+      - release/*
+      - hotfix/*
+  paths:
+    include:
+      - sdk/tables/
+
+pr:
+  branches:
+    include:
+      - master
+      - feature/*
+      - release/*
+      - hotfix/*
+
+extends:
+  template: ../../eng/pipelines/templates/stages/archetype-sdk-external.yml
+  parameters:
+    ServiceDirectory: ms-rest-js
+    Artifacts:
+      - name: azure-ms-rest-js
+        safeName: azuremsrestjs
