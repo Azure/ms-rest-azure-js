@@ -94,6 +94,7 @@
   },
   "scripts": {
     "build": "run-p build:lib",
+    "build:test": "echo skipped",
     "build:browser": "echo skipped",
     "build:lib": "run-s build:tsc build:rollup build:minify",
     "build:tsc": "tsc -p tsconfig.es.json",
