@@ -5,7 +5,6 @@ resources:
       name: joheredi/azure-sdk-for-js
       endpoint: joheredi
       ref: prototype-external-pipelines
-    
 
 trigger:
   branches:
@@ -25,7 +24,11 @@ pr:
 extends:
   template: eng/pipelines/templates/stages/archetype-sdk-external.yml@azure-sdk-for-js
   parameters:
-    ServiceDirectory: ms-rest-js
+    RepoId: Azure/ms-rest-azure-js
+    ServiceDirectory: ms-rest-azure-js
     Artifacts:
-      - name: azure-ms-rest-js
-        safeName: azuremsrestjs
+      - name: azure-ms-rest-azure-js
+        safeName: azuremsrestazurejs
+        skipPublishDocMs: true
+        skipPublishDocGithubIo: true
+        skipUpdatePackageVersion: true
