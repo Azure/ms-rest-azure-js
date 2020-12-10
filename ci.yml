@@ -24,6 +24,8 @@ pr:
 extends:
   template: eng/pipelines/templates/stages/archetype-sdk-external.yml@azure-sdk-for-js
   parameters:
+    TargetDocRepoOwner: Azure
+    TargetDocRepoName: ms-rest-azure-js
     RepoId: Azure/ms-rest-azure-js
     ServiceDirectory: ms-rest-azure-js
     Artifacts:
