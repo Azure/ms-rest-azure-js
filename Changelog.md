@@ -1,4 +1,7 @@
 # Changelog
+## 2.1.0 - 2021-01-26
+- Added support for @azure/identity's TokenCredential. For more information, see https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/identity/identity/README.md#credentials
+
 ## 2.0.1 - 2019-07-30
 - In `getOperationResponse()` if the `resource` is of type `string` and we get an error while performing `JSON.parse()` then instead of letting the error be thrown we set the `resource` as-is as the `response.parsedBody`
 
