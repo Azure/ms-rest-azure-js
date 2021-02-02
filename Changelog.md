@@ -1,7 +1,8 @@
 # Changelog
 
 ## 1.4.0 - 2021-02-02
-- Added support for @azure/core-auth's TokenCredential
+- Added support for @azure/identity's TokenCredential. For more information, see https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/identity/identity/README.md#credentials
+
 ## 1.3.8 - 2019-06-06
 - Fixed tests to pass when -preview suffix set in version.
 
