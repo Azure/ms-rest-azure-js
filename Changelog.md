@@ -1,4 +1,7 @@
 # Changelog
+
+## 1.4.0 - 2021-02-02
+- Added support for @azure/core-auth's TokenCredential
 ## 1.3.8 - 2019-06-06
 - Fixed tests to pass when -preview suffix set in version.
 
