@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
+import { TokenCredential } from "@azure/core-auth";
 import { HttpOperationResponse, OperationArguments, OperationSpec, RequestOptionsBase, RequestPrepareOptions, ServiceClient, ServiceClientCredentials, ServiceClientOptions, WebResource, getDefaultUserAgentValue as getDefaultUserAgentValueFromMsRest } from "@azure/ms-rest-js";
 import { createLROPollerFromInitialResponse, createLROPollerFromPollState, LROPoller } from "./lroPoller";
 import { LROPollState } from "./lroPollStrategy";
@@ -38,12 +39,12 @@ export class AzureServiceClient extends ServiceClient {
    */
   public longRunningOperationRetryTimeout?: number;
 
-  constructor(credentials: ServiceClientCredentials, options?: AzureServiceClientOptions) {
+  constructor(credentials: ServiceClientCredentials | TokenCredential, options?: AzureServiceClientOptions) {
     super(credentials, options = updateOptionsWithDefaultValues(options));
 
     // For convenience, if the credentials have an associated AzureEnvironment,
     // automatically use the baseUri from that environment.
-    const env = (credentials as any).environment;
+    const env = (credentials as any)?.environment;
     if (env && !this.baseUri) {
       this.baseUri = env.resourceManagerEndpointUrl;
     }
