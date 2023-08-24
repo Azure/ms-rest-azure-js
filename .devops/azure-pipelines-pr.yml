@@ -4,7 +4,7 @@ trigger:
 jobs:
 - job: Check_Everything
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: Npm@1
     displayName: 'npm install'
@@ -20,7 +20,7 @@ jobs:
       customCommand: run check:everything -- --azure-devops
 - job: Test
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
   strategy:
     matrix:
       Node6:
@@ -54,7 +54,7 @@ jobs:
       reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/'
 - job: Build
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: Npm@1
     displayName: 'npm install'
