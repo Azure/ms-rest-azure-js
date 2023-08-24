@@ -6,7 +6,7 @@ pr: none
 jobs:
 - job: npm_install
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: Npm@1
     displayName: 'npm install'
@@ -16,7 +16,7 @@ jobs:
       customCommand: install
 - job: Test
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
   strategy:
     matrix:
       Node6:
@@ -50,7 +50,7 @@ jobs:
       reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/'
 - job: Pack
   pool:
-    vmImage: 'Ubuntu 16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: Npm@1
     displayName: 'npm pack'
