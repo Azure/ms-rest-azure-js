@@ -1,3 +1,5 @@
+**Note:** This repository has been deprecated in favor of the new [Azure SDK for JavaScript](https://github.com/azure/azure-sdk-for-js). The long running operation support is provided by the `@azure/core-lro` package (https://github.com/Azure/azure-sdk-for-js/tree/dc5f9743b05ea78f938eba31cbe704150889490c/sdk/core/core-lro).
+
 # ms-rest-azure-js [![Build Status](https://dev.azure.com/azure-public/azsdk/_apis/build/status/public.Azure.ms-rest-azure-js%20-%20CI?branchName=master)](https://dev.azure.com/azure-public/azsdk/_build/latest?definitionId=31&branchName=master)
 Azure Runtime with support for long running operations used by packages generated via the code generator [@microsoft.azure/autorest.typescript](https://www.npmjs.com/package/@microsoft.azure/autorest.typescript).
 
